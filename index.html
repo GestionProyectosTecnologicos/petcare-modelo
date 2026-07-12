@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetCare · Plan de Salud — Prototipo de Plataforma (Modelo Borrador)</title>
+<style>
+  :root{
+    --navy:#1f2a5a; --navy-2:#2a3a75; --navy-3:#39498c;
+    --cream:#f4eee4; --cream-2:#ece4d5; --white:#ffffff;
+    --ink:#22283f; --muted:#6b7288; --line:#d9d2c3;
+    --ok:#2e7d52; --warn:#b26a00; --bad:#a63d3d;
+    --shadow:0 10px 30px rgba(31,42,90,.10);
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--cream);color:var(--ink);font-size:15px;line-height:1.55}
+
+  /* ============ BARRA SUPERIOR ============ */
+  .topbar{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;display:flex;align-items:center;gap:18px;padding:10px 22px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;min-width:170px}
+  .brand svg{flex:0 0 auto}
+  .brand .b1{font-size:20px;font-weight:700;letter-spacing:.5px;line-height:1}
+  .brand .b2{font-size:9.5px;letter-spacing:3.5px;opacity:.85}
+  .viewnav{display:flex;gap:6px;flex:1;justify-content:center;flex-wrap:wrap}
+  .viewnav button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;padding:7px 16px;border-radius:999px;cursor:pointer;font-size:12.5px;letter-spacing:.4px;transition:.15s}
+  .viewnav button:hover{background:rgba(255,255,255,.12)}
+  .viewnav button.act{background:#fff;color:var(--navy);font-weight:700;border-color:#fff}
+  .draftbadge{border:1.5px dashed rgba(255,255,255,.7);color:#fff;font-size:10.5px;letter-spacing:2px;padding:5px 12px;border-radius:8px;font-weight:600;white-space:nowrap}
+
+  /* ============ GENERALES ============ */
+  .view{display:none}
+  .view.act{display:block}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px}
+  h2.sec{font-size:22px;color:var(--navy);letter-spacing:.3px;margin-bottom:4px}
+  p.sub{color:var(--muted);margin-bottom:20px;font-size:13.5px}
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+  .btn{display:inline-block;background:var(--navy);color:#fff;border:none;border-radius:9px;padding:10px 20px;font-size:12.5px;letter-spacing:.6px;font-weight:600;cursor:pointer;transition:.15s;text-transform:uppercase}
+  .btn:hover{background:var(--navy-3)}
+  .btn.ghost{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}
+  .btn.ghost:hover{background:var(--navy);color:#fff}
+  .btn.sm{padding:6px 12px;font-size:11px}
+  .chip{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.4px;padding:3px 10px;border-radius:999px}
+  .chip.ok{background:#e2f2e8;color:var(--ok)}
+  .chip.warn{background:#fdf1dc;color:var(--warn)}
+  .chip.bad{background:#f9e5e5;color:var(--bad)}
+  .chip.info{background:#e4e8f7;color:var(--navy)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:var(--muted);font-size:11px;letter-spacing:.8px;text-transform:uppercase;padding:8px 10px;border-bottom:2px solid var(--line)}
+  td{padding:10px;border-bottom:1px solid #eee7d9;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  .note{background:var(--cream-2);border-left:4px solid var(--navy);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--ink)}
+  .note b{color:var(--navy)}
+  select,input[type=text],input[type=email],input[type=date],textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:9px;background:#fff;font-family:inherit;font-size:13.5px;color:var(--ink)}
+  select:focus,input:focus,textarea:focus{outline:none;border-color:var(--navy-3)}
+  label.f{display:block;font-size:11.5px;font-weight:700;letter-spacing:.6px;color:var(--navy);text-transform:uppercase;margin:12px 0 5px}
+
+  /* ============ LANDING ============ */
+  .hero{background:linear-gradient(100deg,rgba(21,29,66,.94) 30%,rgba(31,42,90,.78)),var(--navy-2);color:#fff;padding:72px 22px 66px;position:relative;overflow:hidden}
+  .hero .paw{position:absolute;right:-40px;bottom:-60px;opacity:.08;transform:rotate(-15deg)}
+  .hero-in{max-width:1180px;margin:0 auto}
+  .hero h1{font-size:52px;letter-spacing:2px;font-weight:800;line-height:1.05}
+  .hero h1 span{color:#c9d2f2}
+  .hero p{max-width:560px;margin:16px 0 26px;color:#dfe3f2;font-size:15.5px}
+  .hero .btn.light{background:#fff;color:var(--navy)}
+  .stripe{background:var(--cream);padding:46px 22px}
+  .stripe.dark{background:var(--navy);color:#fff}
+  .stripe-in{max-width:1180px;margin:0 auto}
+  .steps{counter-reset:paso}
+  .steps .card{position:relative;padding-top:26px}
+  .steps .card::before{counter-increment:paso;content:counter(paso);position:absolute;top:-16px;left:18px;width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px;border:3px solid var(--cream)}
+  .svc h3{color:var(--navy);font-size:15.5px;margin-bottom:6px;letter-spacing:.3px}
+  .svc p{font-size:13px;color:var(--muted)}
+  .svc .tag{margin-bottom:10px}
+  .conv-lock{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.4);border-radius:12px;padding:16px 18px;margin-top:18px;font-size:13px;color:#dfe3f2}
+  footer{background:var(--navy);color:#c9cfe6;padding:26px 22px;font-size:12.5px}
+  .foot-in{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+
+  /* ============ SUBNAV PORTALES ============ */
+  .subnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+  .subnav button{background:#fff;border:1.5px solid var(--line);color:var(--ink);padding:9px 18px;border-radius:10px;cursor:pointer;font-size:12.5px;font-weight:600;letter-spacing:.3px;transition:.15s}
+  .subnav button:hover{border-color:var(--navy-3)}
+  .subnav button.act{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .pane{display:none}
+  .pane.act{display:block}
+
+  /* ============ BENEFICIARIO ============ */
+  .welcome{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;background:var(--navy);color:#fff;border-radius:var(--radius);padding:18px 22px;margin-bottom:22px}
+  .welcome .wname{font-size:17px;font-weight:700}
+  .welcome .wsub{font-size:12.5px;color:#c9d2f2}
+  .petcard{display:flex;gap:18px;align-items:flex-start}
+  .petavatar{width:86px;height:86px;border-radius:50%;background:var(--navy-2);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .kv{font-size:13px}
+  .kv b{display:inline-block;min-width:130px;color:var(--muted);font-weight:600}
+  .timeline{list-style:none;margin-top:6px}
+  .timeline li{position:relative;padding:0 0 18px 26px;border-left:2px solid var(--line);margin-left:8px}
+  .timeline li:last-child{padding-bottom:0}
+  .timeline li::before{content:"";position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--navy);border:2.5px solid var(--cream)}
+  .timeline .tdate{font-size:11px;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;font-weight:700}
+  .timeline .ttitle{font-weight:700;color:var(--navy);font-size:14px;margin:2px 0}
+  .timeline p{font-size:13px;color:var(--ink)}
+  .optswitch{display:flex;gap:0;border:1.5px solid var(--navy);border-radius:10px;overflow:hidden;width:fit-content;margin-bottom:16px}
+  .optswitch button{background:#fff;color:var(--navy);border:none;padding:9px 18px;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:.4px}
+  .optswitch button.act{background:var(--navy);color:#fff}
+  .days{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin:14px 0}
+  .day{border:1.5px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;background:#fff;transition:.12s}
+  .day .dw{font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .day .dn{font-size:19px;font-weight:800;color:var(--navy);margin:2px 0}
+  .day .dx{font-size:10.5px;color:var(--muted)}
+  .day:hover{border-color:var(--navy-3)}
+  .day.sel{background:var(--navy);border-color:var(--navy)}
+  .day.sel .dw,.day.sel .dn,.day.sel .dx{color:#fff}
+  .day.off{opacity:.38;pointer-events:none;background:var(--cream-2)}
+  .hours{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .hr{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--navy)}
+  .hr:hover{border-color:var(--navy-3)}
+  .hr.sel{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .hr.off{opacity:.35;pointer-events:none;text-decoration:line-through}
+  .benef{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}
+  .benef h4{color:var(--navy);font-size:14px;margin-bottom:4px}
+  .benef .via{font-size:11px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+  .bigdisc{font-size:24px;font-weight:800;color:var(--navy)}
+
+  /* ============ ADMIN ============ */
+  .admin-layout{display:grid;grid-template-columns:215px 1fr;gap:22px;align-items:start}
+  .sidenav{background:var(--navy);border-radius:var(--radius);padding:12px;position:sticky;top:74px}
+  .sidenav button{display:block;width:100%;text-align:left;background:transparent;border:none;color:#c9cfe6;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:12.8px;font-weight:600;letter-spacing:.3px;margin-bottom:2px}
+  .sidenav button:hover{background:rgba(255,255,255,.09);color:#fff}
+  .sidenav button.act{background:#fff;color:var(--navy)}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .kpi .kn{font-size:26px;font-weight:800;color:var(--navy);line-height:1.1}
+  .kpi .kl{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:3px}
+  .kpi .kd{font-size:11.5px;margin-top:6px;color:var(--ok);font-weight:600}
+  .bars{display:flex;align-items:flex-end;gap:10px;height:150px;margin-top:16px}
+  .bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%}
+  .bar .fill{width:100%;max-width:46px;background:var(--navy-2);border-radius:6px 6px 0 0;position:relative}
+  .bar .fill.alt{background:#b9c3e6}
+  .bar .bl{font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:.5px}
+  .bar .bv{font-size:11px;font-weight:700;color:var(--navy)}
+  .prog{background:var(--cream-2);border-radius:999px;height:10px;overflow:hidden;margin-top:6px}
+  .prog i{display:block;height:100%;background:var(--navy-2);border-radius:999px}
+  .cap{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--navy)}
+  .cap .prog{flex:1;margin-top:0}
+  .routehead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .empcard h3{color:var(--navy);font-size:16px}
+  .empcard .es{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .mini{font-size:12px;color:var(--muted)}
+
+  /* ============ PLAN ============ */
+  .fase{border-left:4px solid var(--navy);padding:4px 0 4px 16px;margin-bottom:18px}
+  .fase h3{color:var(--navy);font-size:15.5px}
+  .fase .fl{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:800}
+  .fase ul{margin:8px 0 0 18px;font-size:13.5px}
+  .fase li{margin-bottom:4px}
+  .pend td:first-child{font-weight:700;color:var(--navy);width:38%}
+
+  /* ============ WATERMARK / TOAST ============ */
+  .wm{position:fixed;bottom:14px;left:14px;z-index:40;font-size:10px;letter-spacing:2.5px;color:var(--navy);opacity:.45;font-weight:800;border:1.5px dashed var(--navy);padding:5px 10px;border-radius:6px;background:rgba(244,238,228,.85);pointer-events:none}
+  #toast{position:fixed;bottom:20px;right:20px;z-index:60;background:var(--navy);color:#fff;padding:13px 20px;border-radius:10px;font-size:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;max-width:340px}
+  #toast.show{opacity:1;transform:translateY(0)}
+
+  @media(max-width:860px){
+    .admin-layout{grid-template-columns:1fr}
+    .sidenav{position:static;display:flex;flex-wrap:wrap;gap:4px}
+    .sidenav button{width:auto}
+    .hero h1{font-size:36px}
+    .kv b{min-width:110px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= BARRA SUPERIOR ================= -->
+<div class="topbar">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><g fill="#fff"><ellipse cx="7.2" cy="7.6" rx="2" ry="2.7" transform="rotate(-18 7.2 7.6)"/><ellipse cx="12" cy="6" rx="2" ry="2.7"/><ellipse cx="16.8" cy="7.6" rx="2" ry="2.7" transform="rotate(18 16.8 7.6)"/><path d="M12 10.2c-2.6 0-5.4 2.3-5.4 5 0 1.9 1.4 3 3.1 3 .9 0 1.6-.3 2.3-.3s1.4.3 2.3.3c1.7 0 3.1-1.1 3.1-3 0-2.7-2.8-5-5.4-5z"/></g></svg>
+    <div>
+      <div class="b1">Pet<span style="font-weight:400">Care</span></div>
+      <div class="b2">PLAN DE SALUD</div>
+    </div>
+  </div>
+  <nav class="viewnav">
+    <button class="act" onclick="go('landing',this)">Landing</button>
+    <button onclick="go('benef',this)">Portal Beneficiario</button>
+    <button onclick="go('admin',this)">Portal Administración</button>
+    <button onclick="go('plan',this)">Plan de Trabajo</button>
+  </nav>
+  <div class="draftbadge">MODELO BORRADOR</div>
+</div>
+
+<!-- ================= VISTA: LANDING ================= -->
+<section id="v-landing" class="view act">
+  <div class="hero">
+    <svg class="paw" width="360" height="360" viewBox="0 0 24 24" fill="#fff"><g><ellipse cx="7.2" cy="7.6" rx="2" ry="2.7" transform="rotate(-18 7.2 7.6)"/><ellipse cx="12" cy="6" rx="2" ry="2.7"/><ellipse cx="16.8" cy="7.6" rx="2" ry="2.7" transform="rotate(18 16.8 7.6)"/><path d="M12 10.2c-2.6 0-5.4 2.3-5.4 5 0 1.9 1.4 3 3.1 3 .9 0 1.6-.3 2.3-.3s1.4.3 2.3.3c1.7 0 3.1-1.1 3.1-3 0-2.7-2.8-5-5.4-5z"/></g></svg>
+    <div class="hero-in">
+      <h1>PET<span>CARE</span></h1>
+      <p>Medicina veterinaria preventiva como beneficio corporativo. Cada colaborador de tu empresa inscribe una mascota y accede a atención domiciliaria anual, telemedicina y una red de convenios preferenciales.</p>
+      <button class="btn light" onclick="go('benef')">Acceso Beneficiarios</button>
+      <button class="btn ghost" style="color:#fff;border-color:#fff;margin-left:8px" onclick="document.getElementById('registro').scrollIntoView()">Registrarme</button>
+    </div>
+  </div>
+
+  <div class="stripe">
+    <div class="stripe-in">
+      <h2 class="sec">Cómo funciona</h2>
+      <p class="sub">Tres pasos para activar el beneficio.</p>
+      <div class="grid g3 steps" style="margin-top:26px">
+        <div class="card"><b style="color:var(--navy)">Regístrate con tu empresa</b><p class="mini" style="margin-top:6px">Ingresa tu nombre, RUT y correo. Validamos automáticamente que perteneces a una empresa con convenio vigente.</p></div>
+        <div class="card"><b style="color:var(--navy)">Inscribe tu mascota</b><p class="mini" style="margin-top:6px">Una mascota por colaborador — perro o gato, sea tuyo o de tu familia. Creamos su ficha clínica digital.</p></div>
+        <div class="card"><b style="color:var(--navy)">Agenda y accede a beneficios</b><p class="mini" style="margin-top:6px">Reserva la visita preventiva anual a domicilio, consultas online y accede a la red de convenios preferenciales.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripe" style="background:var(--cream-2)">
+    <div class="stripe-in">
+      <h2 class="sec">Servicios del plan</h2>
+      <p class="sub">Incluidos para cada mascota inscrita.</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr))">
+        <div class="card svc">
+          <div class="tag"><span class="chip info">PRESENCIAL · 1 VEZ AL AÑO</span></div>
+          <h3>Consulta preventiva domiciliaria anual</h3>
+          <p>Visita veterinaria programada a domicilio: examen clínico completo, vacunación anual según protocolo sanitario y desparasitación preventiva. Eliges el día y te confirmamos la ventana horaria de visita.</p>
+        </div>
+        <div class="card svc">
+          <div class="tag"><span class="chip info">ONLINE · SEGÚN DISPONIBILIDAD</span></div>
+          <h3>Telemedicina veterinaria</h3>
+          <p>Orientación por videollamada para resolver dudas, hacer seguimiento y determinar si se requiere atención presencial. Agenda con día y hora, incluso el mismo día si hay cupos.</p>
+        </div>
+        <div class="card svc">
+          <div class="tag"><span class="chip info">EMPRESAS</span></div>
+          <h3>Charlas y educación</h3>
+          <p>Actividades para colaboradores: tenencia responsable, medicina preventiva, primeros auxilios y bienestar animal.</p>
+        </div>
+        <div class="card svc">
+          <div class="tag"><span class="chip info">RED DE CONVENIOS</span></div>
+          <h3>Beneficios preferenciales</h3>
+          <p>Descuentos y acceso prioritario en urgencias, imagenología y especialidades con prestadores asociados, gestionados siempre a través de PetCare.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stripe dark">
+    <div class="stripe-in">
+      <h2 class="sec" style="color:#fff">Red de convenios</h2>
+      <p class="sub" style="color:#c9d2f2">Instituciones asociadas que amplían la cobertura del plan.</p>
+      <div class="grid g3">
+        <div class="card" style="box-shadow:none"><b style="color:var(--navy)">Centro Oncológico Veterinario</b><p class="mini" style="margin-top:4px">Hora garantizada en un máximo de 72 horas, solicitada vía PetCare.</p></div>
+        <div class="card" style="box-shadow:none"><b style="color:var(--navy)">Urgencias e imagenología</b><p class="mini" style="margin-top:4px">20% de descuento en atenciones de urgencia y exámenes de imagen.</p></div>
+        <div class="card" style="box-shadow:none"><b style="color:var(--navy)">Especialidades médicas</b><p class="mini" style="margin-top:4px">Endocrinología y dermatología con toma de horas preferente.</p></div>
+      </div>
+      <div class="conv-lock">El detalle de cada convenio es visible para los beneficiarios registrados dentro del portal, en la sección Mis Beneficios.</div>
+    </div>
+  </div>
+
+  <div class="stripe" id="registro">
+    <div class="stripe-in grid g2">
+      <div>
+        <h2 class="sec">Registro de beneficiarios</h2>
+        <p class="sub">Solo para colaboradores de empresas con convenio vigente.</p>
+        <div class="note">
+          <b>Filtro de acceso:</b> el registro se valida cruzando RUT y nombre con la nómina oficial entregada por tu empresa, más verificación del correo electrónico. La aprobación puede ser automática o con revisión manual del equipo PetCare.
+        </div>
+      </div>
+      <div class="card">
+        <label class="f">Nombre completo</label>
+        <input type="text" placeholder="Ej: María Fernández Rojas">
+        <label class="f">RUT</label>
+        <input type="text" placeholder="12.345.678-9">
+        <label class="f">Correo electrónico</label>
+        <input type="email" placeholder="nombre@correo.cl">
+        <label class="f">Empresa</label>
+        <select>
+          <option>Selecciona tu empresa…</option>
+          <option>Banco Andino S.A.</option>
+          <option>Minera Cordillera SpA</option>
+        </select>
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" onclick="toast('Demostración: se envía verificación al correo y se valida el RUT contra la nómina de la empresa.')">Crear mi cuenta</button>
+          <button class="btn ghost" onclick="go('benef')">Ya tengo cuenta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-in">
+      <div><b style="color:#fff">PetCare · Plan de Salud</b><br>(+56) 9 4248 4974 &nbsp;·&nbsp; cdvetlimitada@gmail.com &nbsp;·&nbsp; Lunes a Viernes 10:00 a 18:00</div>
+      <div style="text-align:right">Prototipo demostrativo — datos ficticios de referencia.<br>Estructura, textos y marca sujetos a revisión.</div>
+    </div>
+  </footer>
+</section>
+
+<!-- ================= VISTA: PORTAL BENEFICIARIO ================= -->
+<section id="v-benef" class="view">
+  <div class="wrap">
+    <div class="welcome">
+      <div>
+        <div class="wname">Hola, María Fernández</div>
+        <div class="wsub">Beneficiaria · Banco Andino S.A. &nbsp;·&nbsp; Mascota inscrita: Kira</div>
+      </div>
+      <div style="text-align:right">
+        <span class="chip ok">VISITA ANUAL 2026: DISPONIBLE</span><br>
+        <span style="font-size:11.5px;color:#c9d2f2">Tu beneficio vence el 31-12-2026</span>
+      </div>
+    </div>
+
+    <div class="subnav" id="bnav">
+      <button class="act" onclick="pane('b','mascota',this)">Mi Mascota</button>
+      <button onclick="pane('b','anual',this)">Reservar Visita Anual</button>
+      <button onclick="pane('b','online',this)">Consulta Online</button>
+      <button onclick="pane('b','benefs',this)">Mis Beneficios</button>
+    </div>
+
+    <!-- ---- Mi mascota ---- -->
+    <div id="b-mascota" class="pane act">
+      <div class="grid g2">
+        <div class="card">
+          <div class="petcard">
+            <div class="petavatar"><svg width="46" height="46" viewBox="0 0 24 24" fill="#fff"><g><ellipse cx="7.2" cy="7.6" rx="2" ry="2.7" transform="rotate(-18 7.2 7.6)"/><ellipse cx="12" cy="6" rx="2" ry="2.7"/><ellipse cx="16.8" cy="7.6" rx="2" ry="2.7" transform="rotate(18 16.8 7.6)"/><path d="M12 10.2c-2.6 0-5.4 2.3-5.4 5 0 1.9 1.4 3 3.1 3 .9 0 1.6-.3 2.3-.3s1.4.3 2.3.3c1.7 0 3.1-1.1 3.1-3 0-2.7-2.8-5-5.4-5z"/></g></svg></div>
+            <div style="flex:1">
+              <h2 class="sec" style="margin-bottom:10px">Kira</h2>
+              <div class="kv"><b>Especie / Raza</b> Gato · Doméstico pelo corto</div>
+              <div class="kv"><b>Edad</b> 3 años</div>
+              <div class="kv"><b>Sexo</b> Hembra, esterilizada</div>
+              <div class="kv"><b>Peso registrado</b> 4,2 kg (05-06-2026)</div>
+              <div class="kv"><b>Microchip</b> 956000012345678</div>
+            </div>
+          </div>
+          <div style="margin-top:16px;border-top:1px dashed var(--line);padding-top:14px">
+            <b style="color:var(--navy);font-size:13.5px">Estado sanitario</b>
+            <table style="margin-top:6px">
+              <tr><td>Vacuna triple felina</td><td><span class="chip ok">AL DÍA</span></td><td class="mini">Próxima: mar 2027</td></tr>
+              <tr><td>Vacuna antirrábica</td><td><span class="chip ok">AL DÍA</span></td><td class="mini">Próxima: mar 2027</td></tr>
+              <tr><td>Desparasitación</td><td><span class="chip warn">PRÓXIMA</span></td><td class="mini">Recomendada: ago 2026</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h2 class="sec" style="font-size:17px">Historial de atenciones</h2>
+          <p class="sub" style="margin-bottom:14px">Cada atención queda registrada por el veterinario y disponible aquí. Si necesitas acudir a una clínica externa, este registro respalda los antecedentes de tu mascota.</p>
+          <ul class="timeline">
+            <li>
+              <div class="tdate">05 · 06 · 2026 — Consulta online</div>
+              <div class="ttitle">Decaimiento y baja de apetito</div>
+              <p>Atiende: Dr. D. Soto. Se descartan signos de urgencia. Indicaciones: dieta blanda 48 hrs, hidratación y control de peso semanal.</p>
+              <div style="margin-top:6px"><button class="btn sm ghost" onclick="toast('Demostración: descarga de receta / indicaciones en PDF.')">Ver receta e indicaciones</button></div>
+            </li>
+            <li>
+              <div class="tdate">12 · 03 · 2026 — Visita domiciliaria anual</div>
+              <div class="ttitle">Control sano + vacunación anual</div>
+              <p>Atiende: Dr. C. Muñoz. Examen clínico normal. Se aplica triple felina y antirrábica. Desparasitación interna administrada.</p>
+            </li>
+            <li>
+              <div class="tdate">02 · 03 · 2026 — Registro</div>
+              <div class="ttitle">Inscripción al Plan de Salud</div>
+              <p>Ficha clínica creada. Beneficiaria validada por nómina de Banco Andino S.A.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- Reserva anual ---- -->
+    <div id="b-anual" class="pane">
+      <div class="grid" style="grid-template-columns:1fr;max-width:860px">
+        <div class="note" style="margin-bottom:4px">
+          <b>Así funciona la visita anual:</b> eliges solo el <b>día</b> (no la hora). La agenda del día se cierra 24 horas antes para organizar la ruta de visitas y te confirmaremos una <b>ventana horaria</b> por correo o WhatsApp. Incluye control sano, vacunación anual y desparasitación. Una visita por mascota inscrita por año.
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <h2 class="sec" style="font-size:17px">Selecciona el día de tu visita</h2>
+            <div class="optswitch">
+              <button class="act" onclick="optA(this)">Opción A · Días por sector</button>
+              <button onclick="optB(this)">Opción B · Día libre</button>
+            </div>
+          </div>
+          <div id="optdesc" class="mini" style="margin-bottom:6px">
+            <b>Opción A:</b> cada sector de la ciudad tiene días fijos de atención (tu comuna, Ñuñoa, corresponde al sector Oriente: martes y jueves). Permite rutas más eficientes.
+          </div>
+          <label class="f">Comuna de la visita</label>
+          <select id="comuna" onchange="optRefresh()" style="max-width:320px">
+            <option value="oriente">Ñuñoa — Sector Oriente</option>
+            <option value="norte">Conchalí — Sector Norte</option>
+            <option value="sur">La Florida — Sector Sur</option>
+            <option value="poniente">Maipú — Sector Poniente</option>
+          </select>
+          <div class="days" id="days"></div>
+          <div class="mini" id="cupomsg" style="margin-bottom:12px"></div>
+          <button class="btn" onclick="toast('Demostración: visita solicitada. El día previo recibirás tu ventana horaria confirmada.')">Solicitar visita</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- Consulta online ---- -->
+    <div id="b-online" class="pane">
+      <div class="grid" style="grid-template-columns:1fr;max-width:860px">
+        <div class="note" style="margin-bottom:4px">
+          <b>Consulta online:</b> agenda flexible con día y hora. Si hay cupos, puedes reservar incluso para hoy. La atención es por videollamada y queda registrada en la ficha de tu mascota.
+        </div>
+        <div class="card">
+          <h2 class="sec" style="font-size:17px">Agenda tu videoconsulta</h2>
+          <div class="days" id="odays"></div>
+          <b style="color:var(--navy);font-size:13px">Horas disponibles</b>
+          <div class="hours" id="ohours"></div>
+          <button class="btn" onclick="toast('Demostración: videoconsulta agendada. Recibirás el enlace de conexión por correo.')">Confirmar hora</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- Beneficios ---- -->
+    <div id="b-benefs" class="pane">
+      <div class="note" style="margin-bottom:18px;max-width:860px">
+        <b>Importante:</b> todos los beneficios de la red se gestionan <b>a través de PetCare</b>. Solicita la derivación desde aquí y nosotros coordinamos directamente con el prestador tu descuento u hora preferente.
+      </div>
+      <div class="grid g3">
+        <div class="benef">
+          <div class="bigdisc">≤ 72 hrs</div>
+          <h4>Oncología — Centro Oncológico Veterinario</h4>
+          <p class="mini">Hora garantizada en máximo 72 horas en el centro de referencia oncológica de Santiago.</p>
+          <div class="via">Derivación exclusiva vía PetCare</div>
+          <div style="margin-top:10px"><button class="btn sm" onclick="toast('Demostración: solicitud de derivación enviada al equipo PetCare.')">Solicitar derivación</button></div>
+        </div>
+        <div class="benef">
+          <div class="bigdisc">20%</div>
+          <h4>Urgencias veterinarias</h4>
+          <p class="mini">Descuento en atenciones de urgencia con clínica asociada, incluida alternativa de atención 24 horas.</p>
+          <div class="via">Derivación exclusiva vía PetCare</div>
+          <div style="margin-top:10px"><button class="btn sm" onclick="toast('Demostración: solicitud de derivación enviada al equipo PetCare.')">Solicitar derivación</button></div>
+        </div>
+        <div class="benef">
+          <div class="bigdisc">20%</div>
+          <h4>Imagenología</h4>
+          <p class="mini">Descuento en radiografías y exámenes de imagen con prestadores asociados.</p>
+          <div class="via">Derivación exclusiva vía PetCare</div>
+          <div style="margin-top:10px"><button class="btn sm" onclick="toast('Demostración: solicitud de derivación enviada al equipo PetCare.')">Solicitar derivación</button></div>
+        </div>
+        <div class="benef">
+          <div class="bigdisc">Preferente</div>
+          <h4>Endocrinología</h4>
+          <p class="mini">Toma de horas preferente con especialista asociado.</p>
+          <div class="via">Derivación exclusiva vía PetCare</div>
+          <div style="margin-top:10px"><button class="btn sm" onclick="toast('Demostración: solicitud de derivación enviada al equipo PetCare.')">Solicitar derivación</button></div>
+        </div>
+        <div class="benef">
+          <div class="bigdisc">Preferente</div>
+          <h4>Dermatología</h4>
+          <p class="mini">Toma de horas preferente con especialista asociado.</p>
+          <div class="via">Derivación exclusiva vía PetCare</div>
+          <div style="margin-top:10px"><button class="btn sm" onclick="toast('Demostración: solicitud de derivación enviada al equipo PetCare.')">Solicitar derivación</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VISTA: ADMIN ================= -->
+<section id="v-admin" class="view">
+  <div class="wrap">
+    <div class="admin-layout">
+      <div class="sidenav" id="anav">
+        <button class="act" onclick="pane('a','dash',this)">Dashboard</button>
+        <button onclick="pane('a','rutas',this)">Agenda y Rutas</button>
+        <button onclick="pane('a','usuarios',this)">Beneficiarios</button>
+        <button onclick="pane('a','empresas',this)">Empresas</button>
+        <button onclick="pane('a','atencion',this)">Registro Clínico</button>
+        <button onclick="pane('a','deriv',this)">Derivaciones</button>
+        <button onclick="pane('a','data',this)">Data y Campañas</button>
+      </div>
+
+      <div>
+        <!-- ---- Dashboard ---- -->
+        <div id="a-dash" class="pane act">
+          <h2 class="sec">Dashboard general</h2>
+          <p class="sub">Visión consolidada de todas las empresas con convenio. Datos ficticios de demostración.</p>
+          <div class="grid g4">
+            <div class="kpi"><div class="kn">1.076</div><div class="kl">Beneficiarios activos</div><div class="kd">+ 48 este mes</div></div>
+            <div class="kpi"><div class="kn">62%</div><div class="kl">Uso beneficio anual</div><div class="kd">667 visitas realizadas</div></div>
+            <div class="kpi"><div class="kn">148</div><div class="kl">Visitas del mes</div><div class="kd">Cap. utilizada: 74%</div></div>
+            <div class="kpi"><div class="kn">96</div><div class="kl">Consultas online mes</div><div class="kd">+ 12% vs mes anterior</div></div>
+          </div>
+          <div class="grid g2" style="margin-top:16px">
+            <div class="card">
+              <b style="color:var(--navy)">Atenciones por mes</b>
+              <div class="bars">
+                <div class="bar"><span class="bv">118</span><div class="fill alt" style="height:48%"></div><span class="bl">FEB</span></div>
+                <div class="bar"><span class="bv">156</span><div class="fill alt" style="height:64%"></div><span class="bl">MAR</span></div>
+                <div class="bar"><span class="bv">171</span><div class="fill alt" style="height:70%"></div><span class="bl">ABR</span></div>
+                <div class="bar"><span class="bv">189</span><div class="fill alt" style="height:77%"></div><span class="bl">MAY</span></div>
+                <div class="bar"><span class="bv">214</span><div class="fill" style="height:88%"></div><span class="bl">JUN</span></div>
+                <div class="bar"><span class="bv">244</span><div class="fill" style="height:100%"></div><span class="bl">JUL</span></div>
+              </div>
+              <p class="mini" style="margin-top:10px">Incluye visitas domiciliarias y consultas online.</p>
+            </div>
+            <div class="card">
+              <b style="color:var(--navy)">Uso del beneficio anual por empresa</b>
+              <div style="margin-top:14px">
+                <div style="display:flex;justify-content:space-between;font-size:13px"><b>Banco Andino S.A.</b><span>68%</span></div>
+                <div class="prog"><i style="width:68%"></i></div>
+              </div>
+              <div style="margin-top:14px">
+                <div style="display:flex;justify-content:space-between;font-size:13px"><b>Minera Cordillera SpA</b><span>41%</span></div>
+                <div class="prog"><i style="width:41%"></i></div>
+              </div>
+              <div style="margin-top:16px" class="note">
+                <b>Oportunidad:</b> 214 beneficiarios entran a sus últimos 60 días de vigencia sin haber usado la visita anual. Sugerencia: campaña de recordatorio (ver Data y Campañas).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- Agenda y Rutas ---- -->
+        <div id="a-rutas" class="pane">
+          <h2 class="sec">Agenda y rutas de visitas domiciliarias</h2>
+          <p class="sub">La agenda de cada día se cierra 24 horas antes. Al cerrarla, el sistema ordena las visitas por cercanía geográfica y asigna ventanas horarias que se notifican a cada beneficiario.</p>
+          <div class="card">
+            <div class="routehead">
+              <div>
+                <b style="color:var(--navy);font-size:16px">Martes 14 de julio — Sector Oriente</b>
+                <div class="mini">Veterinario asignado: Dr. C. Muñoz · Comunas: Las Condes, Providencia, Ñuñoa, La Reina</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn sm ghost" onclick="toast('Demostración: agenda cerrada. Ruta optimizada y ventanas horarias asignadas.')">Cerrar agenda y armar ruta</button>
+                <button class="btn sm" onclick="toast('Demostración: ventanas horarias notificadas por correo y WhatsApp a los 8 beneficiarios.')">Notificar ventanas horarias</button>
+              </div>
+            </div>
+            <div class="cap" style="margin-bottom:14px">Cupos del día<div class="prog"><i style="width:80%"></i></div>8 / 10</div>
+            <table>
+              <tr><th>Orden ruta</th><th>Ventana</th><th>Beneficiario</th><th>Mascota</th><th>Comuna</th><th>Servicio</th><th>Estado</th></tr>
+              <tr><td><b>1</b></td><td>09:00 – 10:30</td><td>R. Contreras</td><td>Bruno · Perro</td><td>La Reina</td><td>Control + vacuna</td><td><span class="chip ok">NOTIFICADO</span></td></tr>
+              <tr><td><b>2</b></td><td>09:45 – 11:15</td><td>P. Salinas</td><td>Olivia · Gato</td><td>La Reina</td><td>Control + vacuna</td><td><span class="chip ok">NOTIFICADO</span></td></tr>
+              <tr><td><b>3</b></td><td>10:30 – 12:00</td><td>M. Fernández</td><td>Kira · Gato</td><td>Ñuñoa</td><td>Control + vacuna</td><td><span class="chip ok">NOTIFICADO</span></td></tr>
+              <tr><td><b>4</b></td><td>11:30 – 13:00</td><td>J. Espinoza</td><td>Teo · Perro</td><td>Ñuñoa</td><td>Control + vacuna</td><td><span class="chip warn">PENDIENTE</span></td></tr>
+              <tr><td><b>5</b></td><td>13:45 – 15:15</td><td>C. Vidal</td><td>Luna · Perro</td><td>Providencia</td><td>Control + vacuna</td><td><span class="chip warn">PENDIENTE</span></td></tr>
+              <tr><td><b>6</b></td><td>14:30 – 16:00</td><td>A. Torres</td><td>Milo · Gato</td><td>Providencia</td><td>Control + vacuna</td><td><span class="chip warn">PENDIENTE</span></td></tr>
+              <tr><td><b>7</b></td><td>15:30 – 17:00</td><td>F. Herrera</td><td>Rocky · Perro</td><td>Las Condes</td><td>Control + vacuna</td><td><span class="chip warn">PENDIENTE</span></td></tr>
+              <tr><td><b>8</b></td><td>16:15 – 17:45</td><td>V. Muñoz</td><td>Nala · Perro</td><td>Las Condes</td><td>Control + vacuna</td><td><span class="chip warn">PENDIENTE</span></td></tr>
+            </table>
+            <div class="note" style="margin-top:14px">
+              <b>Parámetros configurables:</b> tope de visitas diarias (hoy: 10), sectores y sus días de atención, horario de cierre de agenda, y esquema de agendamiento (Opción A: días fijos por sector · Opción B: día libre con ruta optimizada). El prototipo permite comparar ambas opciones en el portal del beneficiario.
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- Beneficiarios ---- -->
+        <div id="a-usuarios" class="pane">
+          <h2 class="sec">Beneficiarios y validación de acceso</h2>
+          <p class="sub">Toda solicitud de registro se cruza contra la nómina entregada por la empresa (RUT + nombre) y se verifica el correo. La aprobación puede configurarse como automática o manual.</p>
+          <div class="card">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+              <b style="color:var(--navy)">Solicitudes recientes</b>
+              <select style="max-width:240px;margin-left:auto"><option>Todas las empresas</option><option>Banco Andino S.A.</option><option>Minera Cordillera SpA</option></select>
+            </div>
+            <table>
+              <tr><th>Solicitante</th><th>RUT</th><th>Empresa</th><th>Correo verificado</th><th>Cruce nómina</th><th>Estado</th><th></th></tr>
+              <tr><td>L. Riquelme</td><td>14.782.xxx-x</td><td>Banco Andino</td><td><span class="chip ok">SÍ</span></td><td><span class="chip ok">COINCIDE</span></td><td><span class="chip ok">APROBADO AUTO</span></td><td></td></tr>
+              <tr><td>S. Aravena</td><td>16.221.xxx-x</td><td>Minera Cordillera</td><td><span class="chip ok">SÍ</span></td><td><span class="chip warn">REVISAR</span></td><td><span class="chip warn">PENDIENTE</span></td>
+                <td style="white-space:nowrap"><button class="btn sm" onclick="toast('Demostración: beneficiario aprobado manualmente.')">Aprobar</button> <button class="btn sm ghost" onclick="toast('Demostración: solicitud rechazada con aviso al solicitante.')">Rechazar</button></td></tr>
+              <tr><td>D. Fuentes</td><td>18.907.xxx-x</td><td>Banco Andino</td><td><span class="chip warn">PENDIENTE</span></td><td><span class="chip ok">COINCIDE</span></td><td><span class="chip warn">ESPERANDO CORREO</span></td><td></td></tr>
+              <tr><td>K. Morales</td><td>17.455.xxx-x</td><td>Banco Andino</td><td><span class="chip ok">SÍ</span></td><td><span class="chip bad">NO ENCONTRADO</span></td><td><span class="chip bad">RECHAZADO</span></td><td></td></tr>
+            </table>
+            <div class="note" style="margin-top:14px"><b>Regla del plan:</b> una mascota inscrita por colaborador. El sistema impide inscribir una segunda mascota bajo el mismo RUT.</div>
+          </div>
+        </div>
+
+        <!-- ---- Empresas ---- -->
+        <div id="a-empresas" class="pane">
+          <h2 class="sec">Empresas con convenio</h2>
+          <p class="sub">El valor del plan se define por dotación de colaboradores. Todos los beneficiarios acceden a los mismos servicios y convenios.</p>
+          <div class="grid g2">
+            <div class="card empcard">
+              <h3>Banco Andino S.A.</h3>
+              <div class="es">Convenio vigente desde 01-03-2026 · Contacto: Gerencia de Personas</div>
+              <table>
+                <tr><td>Dotación informada</td><td style="text-align:right"><b>1.240</b></td></tr>
+                <tr><td>Beneficiarios registrados</td><td style="text-align:right"><b>862 (70%)</b></td></tr>
+                <tr><td>Visitas anuales realizadas</td><td style="text-align:right"><b>586</b></td></tr>
+                <tr><td>Consultas online acumuladas</td><td style="text-align:right"><b>431</b></td></tr>
+              </table>
+              <div style="margin-top:12px"><button class="btn sm ghost" onclick="toast('Demostración: reporte mensual de uso del beneficio para la empresa (PDF/Excel).')">Generar reporte para la empresa</button></div>
+            </div>
+            <div class="card empcard">
+              <h3>Minera Cordillera SpA</h3>
+              <div class="es">Convenio vigente desde 01-05-2026 · Contacto: Bienestar RRHH</div>
+              <table>
+                <tr><td>Dotación informada</td><td style="text-align:right"><b>380</b></td></tr>
+                <tr><td>Beneficiarios registrados</td><td style="text-align:right"><b>214 (56%)</b></td></tr>
+                <tr><td>Visitas anuales realizadas</td><td style="text-align:right"><b>81</b></td></tr>
+                <tr><td>Consultas online acumuladas</td><td style="text-align:right"><b>66</b></td></tr>
+              </table>
+              <div style="margin-top:12px"><button class="btn sm ghost" onclick="toast('Demostración: reporte mensual de uso del beneficio para la empresa (PDF/Excel).')">Generar reporte para la empresa</button></div>
+            </div>
+          </div>
+          <div class="note" style="margin-top:16px"><b>Valor para la venta:</b> el reporte de uso demuestra a cada empresa que el beneficio se está utilizando — respaldo clave para renovaciones y para presentar el proyecto a nuevas empresas y sindicatos.</div>
+        </div>
+
+        <!-- ---- Registro clínico ---- -->
+        <div id="a-atencion" class="pane">
+          <h2 class="sec">Registro clínico de atenciones</h2>
+          <p class="sub">Vista para el equipo veterinario. Todo lo registrado aquí queda visible de inmediato en el perfil del beneficiario.</p>
+          <div class="grid g2">
+            <div class="card">
+              <b style="color:var(--navy)">Registrar atención</b>
+              <label class="f">Tipo de atención</label>
+              <select><option>Consulta online</option><option>Visita domiciliaria anual</option></select>
+              <label class="f">Mascota / Beneficiario</label>
+              <select><option>Kira — M. Fernández (Banco Andino)</option><option>Bruno — R. Contreras (Banco Andino)</option><option>Teo — J. Espinoza (Minera Cordillera)</option></select>
+              <label class="f">Motivo y hallazgos</label>
+              <textarea rows="3" placeholder="Examen clínico, signos, evaluación…"></textarea>
+              <label class="f">Indicaciones y receta</label>
+              <textarea rows="3" placeholder="Tratamiento, medicamentos, controles…"></textarea>
+              <label class="f">Derivación a convenio (opcional)</label>
+              <select><option>Sin derivación</option><option>Oncología — COV (hora ≤ 72 hrs)</option><option>Urgencias (20% dcto.)</option><option>Imagenología (20% dcto.)</option><option>Endocrinología (preferente)</option><option>Dermatología (preferente)</option></select>
+              <div style="margin-top:16px"><button class="btn" onclick="toast('Demostración: atención registrada y publicada en el perfil del beneficiario.')">Guardar atención</button></div>
+            </div>
+            <div class="card">
+              <b style="color:var(--navy)">Últimas atenciones registradas</b>
+              <table style="margin-top:10px">
+                <tr><th>Fecha</th><th>Mascota</th><th>Tipo</th><th>Veterinario</th><th>Derivación</th></tr>
+                <tr><td>11-07</td><td>Simón</td><td>Online</td><td>Dr. D. Soto</td><td>Dermatología</td></tr>
+                <tr><td>11-07</td><td>Maya</td><td>Online</td><td>Dr. D. Soto</td><td>—</td></tr>
+                <tr><td>10-07</td><td>Bruno</td><td>Domiciliaria</td><td>Dr. C. Muñoz</td><td>—</td></tr>
+                <tr><td>10-07</td><td>Coco</td><td>Domiciliaria</td><td>Dr. C. Muñoz</td><td>Imagenología</td></tr>
+                <tr><td>09-07</td><td>Nala</td><td>Online</td><td>Dr. D. Soto</td><td>—</td></tr>
+              </table>
+              <div class="note" style="margin-top:14px"><b>Por qué importa:</b> el registro da seguridad al beneficiario (antecedentes disponibles si acude a una clínica externa) y a la empresa (evidencia del servicio prestado). Y cada atención alimenta la base de datos del negocio.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- Derivaciones ---- -->
+        <div id="a-deriv" class="pane">
+          <h2 class="sec">Derivaciones a la red de convenios</h2>
+          <p class="sub">Toda derivación se canaliza a través de PetCare: el equipo coordina la hora con el prestador y el sistema deja trazabilidad completa — base para medir y liquidar los acuerdos con cada convenio.</p>
+          <div class="card">
+            <table>
+              <tr><th>Fecha</th><th>Mascota</th><th>Convenio</th><th>Beneficio</th><th>Estado</th></tr>
+              <tr><td>11-07</td><td>Simón</td><td>Dermatología</td><td>Hora preferente</td><td><span class="chip warn">COORDINANDO</span></td></tr>
+              <tr><td>08-07</td><td>Coco</td><td>Imagenología</td><td>20% dcto. radiografía</td><td><span class="chip ok">AGENDADA</span></td></tr>
+              <tr><td>04-07</td><td>Lola</td><td>Oncología — COV</td><td>Hora ≤ 72 hrs</td><td><span class="chip ok">ATENDIDA</span></td></tr>
+              <tr><td>28-06</td><td>Max</td><td>Urgencias</td><td>20% dcto.</td><td><span class="chip ok">ATENDIDA</span></td></tr>
+              <tr><td>21-06</td><td>Pelusa</td><td>Endocrinología</td><td>Hora preferente</td><td><span class="chip ok">ATENDIDA</span></td></tr>
+            </table>
+            <div class="grid g3" style="margin-top:16px">
+              <div class="kpi"><div class="kn">31</div><div class="kl">Derivaciones acumuladas</div></div>
+              <div class="kpi"><div class="kn">2,1 días</div><div class="kl">Tiempo prom. a hora COV</div></div>
+              <div class="kpi"><div class="kn">100%</div><div class="kl">Canalizadas vía PetCare</div></div>
+            </div>
+            <div class="note" style="margin-top:16px"><b>Control del canal:</b> el beneficiario nunca contacta al prestador directamente — solicita desde su portal y PetCare gestiona. Así se protege el acuerdo comercial y el registro por paciente derivado.</div>
+          </div>
+        </div>
+
+        <!-- ---- Data y campañas ---- -->
+        <div id="a-data" class="pane">
+          <h2 class="sec">Data y campañas</h2>
+          <p class="sub">La plataforma acumula datos de cada registro, atención y derivación. Esos datos se convierten en segmentos accionables para recordatorios y email marketing.</p>
+          <div class="grid g3">
+            <div class="card">
+              <span class="chip warn">SEGMENTO</span>
+              <div class="kn" style="font-size:30px;font-weight:800;color:var(--navy);margin-top:8px">214</div>
+              <b style="font-size:13.5px">Beneficio anual sin usar</b>
+              <p class="mini" style="margin:6px 0 12px">Beneficiarios en los últimos 60 días de vigencia sin visita anual realizada.</p>
+              <button class="btn sm" onclick="toast('Demostración: campaña de recordatorio programada para el segmento.')">Programar recordatorio</button>
+            </div>
+            <div class="card">
+              <span class="chip warn">SEGMENTO</span>
+              <div class="kn" style="font-size:30px;font-weight:800;color:var(--navy);margin-top:8px">89</div>
+              <b style="font-size:13.5px">Vacunas próximas a vencer</b>
+              <p class="mini" style="margin:6px 0 12px">Mascotas cuya vacunación anual vence dentro de los próximos 45 días.</p>
+              <button class="btn sm" onclick="toast('Demostración: campaña de vacunación programada para el segmento.')">Programar recordatorio</button>
+            </div>
+            <div class="card">
+              <span class="chip warn">SEGMENTO</span>
+              <div class="kn" style="font-size:30px;font-weight:800;color:var(--navy);margin-top:8px">402</div>
+              <b style="font-size:13.5px">Nunca han usado consulta online</b>
+              <p class="mini" style="margin:6px 0 12px">Beneficiarios activos que aún no conocen la telemedicina del plan.</p>
+              <button class="btn sm" onclick="toast('Demostración: campaña de activación programada para el segmento.')">Programar campaña</button>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <b style="color:var(--navy)">Vista previa — correo de recordatorio</b>
+            <div style="border:1px solid var(--line);border-radius:10px;padding:18px;margin-top:12px;background:var(--cream)">
+              <div style="font-size:12px;color:var(--muted)">Asunto: Kira aún tiene su visita veterinaria anual disponible</div>
+              <div style="margin-top:10px;font-size:13.5px">Hola María, tu beneficio PetCare vence el 31-12-2026 y aún tienes disponible la visita preventiva anual de Kira: control sano, vacunación y desparasitación, en tu casa y sin costo. Reserva tu día en el portal.</div>
+              <div style="margin-top:12px"><span class="btn sm" style="pointer-events:none">Reservar mi visita</span></div>
+            </div>
+            <div class="note" style="margin-top:14px"><b>Etapa 2 del proyecto:</b> automatizar estos envíos (correo y WhatsApp) y sumar promociones de servicios adicionales sobre la misma base de datos.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VISTA: PLAN DE TRABAJO ================= -->
+<section id="v-plan" class="view">
+  <div class="wrap" style="max-width:920px">
+    <h2 class="sec">Plan de trabajo propuesto</h2>
+    <p class="sub">Implementación por etapas, partiendo por lo definido como prioritario en la reunión: agendamiento y captura de datos.</p>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="fase">
+        <div class="fl">Etapa 1 · Núcleo operativo</div>
+        <h3>Agendamiento, portales y datos</h3>
+        <ul>
+          <li>Landing page con registro validado contra nómina (RUT + nombre + verificación de correo).</li>
+          <li>Portal del beneficiario: perfil de mascota, historial clínico, reserva de visita anual (solo día) y consulta online (día y hora).</li>
+          <li>Motor de agenda presencial: sectores, cierre 24 hrs antes, tope diario configurable, ruta ordenada y ventanas horarias.</li>
+          <li>Portal de administración: dashboard, gestión de beneficiarios y registro clínico del equipo veterinario.</li>
+        </ul>
+      </div>
+      <div class="fase">
+        <div class="fl">Etapa 2 · Red de convenios y comunicación</div>
+        <h3>Derivaciones trazables y campañas</h3>
+        <ul>
+          <li>Módulo de derivaciones con estados y métricas por convenio (respaldo de los acuerdos comerciales).</li>
+          <li>Notificaciones automáticas de ventana horaria por correo / WhatsApp.</li>
+          <li>Recordatorios automáticos: beneficio sin usar, vacunas por vencer.</li>
+        </ul>
+      </div>
+      <div class="fase" style="margin-bottom:0">
+        <div class="fl">Etapa 3 · Escalamiento</div>
+        <h3>Más empresas, más datos, más ingresos</h3>
+        <ul>
+          <li>Alta de nuevas empresas en minutos (carga de nómina y activación).</li>
+          <li>Reportes de uso por empresa para renovaciones y venta a nuevos clientes.</li>
+          <li>Email marketing y promociones sobre la base de datos acumulada.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <b style="color:var(--navy);font-size:15px">Definiciones pendientes (conversadas en la reunión)</b>
+      <table class="pend" style="margin-top:10px">
+        <tr><td>Esquema de agendamiento presencial</td><td>Opción A (días fijos por sector) u Opción B (día libre con ruta optimizada). Ambas están simuladas en este prototipo para comparar.</td></tr>
+        <tr><td>Tope de visitas diarias</td><td>Se habló de aprox. 10 por día. Queda como parámetro configurable.</td></tr>
+        <tr><td>Validación de registros</td><td>Aprobación automática por cruce de nómina, o revisión manual caso a caso.</td></tr>
+        <tr><td>Nómina por empresa</td><td>Campos mínimos a solicitar: RUT y nombre (evaluar correo corporativo).</td></tr>
+        <tr><td>Canal de notificación</td><td>Ventana horaria confirmada por correo, WhatsApp o ambos.</td></tr>
+        <tr><td>Convenios</td><td>Logos y condiciones finales de endocrinología, dermatología y urgencias 24 hrs en cierre.</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <b style="color:var(--navy);font-size:15px">Modelo de colaboración</b>
+      <ul style="margin:10px 0 0 18px;font-size:13.5px">
+        <li style="margin-bottom:6px"><b>Prototipo sin costo</b> — este modelo borrador se itera con el equipo PetCare hasta validar la idea (esto sí, esto no).</li>
+        <li style="margin-bottom:6px"><b>Desarrollo inicial</b> — un pago único por la construcción de la plataforma (bases de datos, portales y agenda operativos).</li>
+        <li style="margin-bottom:6px"><b>Membresía y soporte en pausa</b> — la mensualidad se activa solo cuando PetCare cierre su primer cliente corporativo. Sin clientes, sin cobros mensuales.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="wm">MODELO BORRADOR — DATOS FICTICIOS</div>
+<div id="toast"></div>
+
+<script>
+  /* ---------- navegación de vistas ---------- */
+  function go(v, btn){
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('act'));
+    document.getElementById('v-'+v).classList.add('act');
+    const navBtns = document.querySelectorAll('.viewnav button');
+    navBtns.forEach(b=>b.classList.remove('act'));
+    if(btn){ btn.classList.add('act'); }
+    else{
+      const idx = {landing:0, benef:1, admin:2, plan:3}[v];
+      navBtns[idx].classList.add('act');
+    }
+    window.scrollTo({top:0});
+  }
+  function pane(prefix, id, btn){
+    const scope = prefix==='b' ? '#v-benef' : '#v-admin';
+    document.querySelectorAll(scope+' .pane').forEach(x=>x.classList.remove('act'));
+    document.getElementById(prefix+'-'+id).classList.add('act');
+    btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('act'));
+    btn.classList.add('act');
+  }
+
+  /* ---------- toast ---------- */
+  let tt;
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(tt); tt = setTimeout(()=>t.classList.remove('show'), 3400);
+  }
+
+  /* ---------- reserva presencial: opciones A/B ---------- */
+  // Días demo: 14 al 25 de julio 2026 (lun-vie). weekday: 2=mar ... con sector asignado
+  const DAYS = [
+    {dw:'MAR', dn:14, sector:'oriente',  cupos:2},
+    {dw:'MIÉ', dn:15, sector:'norte',    cupos:6},
+    {dw:'JUE', dn:16, sector:'oriente',  cupos:5},
+    {dw:'VIE', dn:17, sector:'poniente', cupos:8},
+    {dw:'LUN', dn:20, sector:'sur',      cupos:9},
+    {dw:'MAR', dn:21, sector:'oriente',  cupos:10},
+    {dw:'MIÉ', dn:22, sector:'norte',    cupos:10},
+    {dw:'JUE', dn:23, sector:'oriente',  cupos:7},
+    {dw:'VIE', dn:24, sector:'poniente', cupos:10},
+  ];
+  let modo = 'A';
+  function optA(btn){ modo='A'; switchOpt(btn,
+    '<b>Opción A:</b> cada sector de la ciudad tiene días fijos de atención. Solo se habilitan los días que corresponden a la comuna seleccionada — rutas máximamente eficientes.'); }
+  function optB(btn){ modo='B'; switchOpt(btn,
+    '<b>Opción B:</b> eliges cualquier día con cupos disponibles. Al cierre de la agenda (24 hrs antes), la ruta se ordena geográficamente para minimizar desplazamientos.'); }
+  function switchOpt(btn, desc){
+    btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('act'));
+    btn.classList.add('act');
+    document.getElementById('optdesc').innerHTML = desc;
+    optRefresh();
+  }
+  function optRefresh(){
+    const sector = document.getElementById('comuna').value;
+    const c = document.getElementById('days'); c.innerHTML='';
+    DAYS.forEach(d=>{
+      const off = (modo==='A' && d.sector!==sector) || d.cupos===0;
+      const el = document.createElement('div');
+      el.className = 'day'+(off?' off':'');
+      el.innerHTML = `<div class="dw">${d.dw}</div><div class="dn">${d.dn}</div><div class="dx">JUL · ${d.cupos} cupos</div>`;
+      if(!off){ el.onclick = ()=>{
+        c.querySelectorAll('.day').forEach(x=>x.classList.remove('sel'));
+        el.classList.add('sel');
+        document.getElementById('cupomsg').innerHTML =
+          `Seleccionaste el <b>${d.dw} ${d.dn} de julio</b>. Solo eliges el día: el ${d.dn-1} de julio, al cierre de la agenda, te confirmaremos tu ventana horaria.`;
+      };}
+      c.appendChild(el);
+    });
+    document.getElementById('cupomsg').textContent = '';
+  }
+
+  /* ---------- consulta online ---------- */
+  const ODAYS = [
+    {dw:'HOY', dn:12, hrs:['16:00','17:30','18:30']},
+    {dw:'LUN', dn:13, hrs:['09:00','10:30','12:00','16:00','17:30']},
+    {dw:'MAR', dn:14, hrs:['09:00','11:00','15:00','18:00']},
+    {dw:'MIÉ', dn:15, hrs:['10:00','12:30','16:30']},
+    {dw:'JUE', dn:16, hrs:['09:30','11:30','15:30','17:00','18:30']},
+  ];
+  function orender(){
+    const c = document.getElementById('odays'); c.innerHTML='';
+    ODAYS.forEach((d,i)=>{
+      const el = document.createElement('div');
+      el.className = 'day'+(i===0?' sel':'');
+      el.innerHTML = `<div class="dw">${d.dw}</div><div class="dn">${d.dn}</div><div class="dx">JUL · ${d.hrs.length} horas</div>`;
+      el.onclick = ()=>{ c.querySelectorAll('.day').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); ohours(d); };
+      c.appendChild(el);
+    });
+    ohours(ODAYS[0]);
+  }
+  function ohours(d){
+    const h = document.getElementById('ohours'); h.innerHTML='';
+    const all = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30'];
+    all.forEach(x=>{
+      const b = document.createElement('div');
+      const on = d.hrs.includes(x);
+      b.className = 'hr'+(on?'':' off');
+      b.textContent = x;
+      if(on){ b.onclick = ()=>{ h.querySelectorAll('.hr').forEach(y=>y.classList.remove('sel')); b.classList.add('sel'); }; }
+      h.appendChild(b);
+    });
+  }
+
+  optRefresh();
+  orender();
+
+  /* ---------- deep-link por hash: #benef #admin #plan ---------- */
+  const h = location.hash.replace('#','');
+  if(['benef','admin','plan'].includes(h)) go(h);
+</script>
+</body>
+</html>
