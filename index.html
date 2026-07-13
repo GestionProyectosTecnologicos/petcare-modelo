@@ -171,6 +171,55 @@
     .hero h1{font-size:36px}
     .kv b{min-width:110px}
   }
+
+  /* ============ CTA DEL HERO ============ */
+  .hero-cta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  /* ============ MENÚ HAMBURGUESA ============ */
+  .navtoggle{display:none;align-items:center;justify-content:center;width:42px;height:42px;flex:0 0 auto;background:transparent;border:1px solid rgba(255,255,255,.35);border-radius:10px;cursor:pointer;transition:.15s}
+  .navtoggle:hover{background:rgba(255,255,255,.12)}
+  .navtoggle svg{display:block}
+  .navtoggle .x{display:none}
+  .topbar.open .navtoggle .bars{display:none}
+  .topbar.open .navtoggle .x{display:block}
+
+  /* ============ MOBILE (≤760px) ============ */
+  @media(max-width:760px){
+    .topbar{gap:12px;padding:11px 16px}
+    .brand{flex:1 1 auto;min-width:0}
+    .brand .b1{font-size:18px}
+    .draftbadge{display:none} /* redundante con el watermark fijo inferior en mobile */
+    .navtoggle{display:inline-flex}
+    .viewnav{order:5;flex-basis:100%;flex-direction:column;justify-content:flex-start;gap:6px;display:none;padding-top:8px;margin-top:2px;border-top:1px solid rgba(255,255,255,.16)}
+    .topbar.open .viewnav{display:flex}
+    .viewnav button{width:100%;text-align:left;padding:12px 14px;font-size:13.5px;border-radius:10px}
+
+    .hero{padding:52px 20px 46px}
+    .hero h1{font-size:33px;letter-spacing:1px}
+    .hero p{font-size:14.5px;margin:14px 0 22px}
+    .hero .paw{width:230px;height:230px;right:-56px;bottom:-44px}
+    .hero-cta .btn{width:100%;padding:13px 20px}
+
+    .stripe{padding:36px 20px}
+    h2.sec{font-size:20px}
+    p.sub{font-size:13px}
+    .wrap{padding:22px 18px 48px}
+    .note{padding:12px 14px}
+
+    #registro .stripe-in{gap:22px}
+    #registro .card{padding:18px}
+
+    .foot-in{flex-direction:column;align-items:flex-start;gap:12px}
+    .foot-in>div:last-child{text-align:left !important}
+  }
+
+  /* ============ PISO DE ACCESIBILIDAD ============ */
+  :focus-visible{outline:2px solid var(--navy-3);outline-offset:2px;border-radius:4px}
+  .topbar :focus-visible,.hero :focus-visible{outline-color:#fff}
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+  }
 </style>
 </head>
 <body>
@@ -184,13 +233,17 @@
       <div class="b2">PLAN DE SALUD</div>
     </div>
   </div>
-  <nav class="viewnav">
+  <nav class="viewnav" id="mainnav">
     <button class="act" onclick="go('landing',this)">Landing</button>
     <button onclick="go('benef',this)">Portal Beneficiario</button>
     <button onclick="go('admin',this)">Portal Administración</button>
     <button onclick="go('plan',this)">Plan de Trabajo</button>
   </nav>
   <div class="draftbadge">MODELO BORRADOR</div>
+  <button class="navtoggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mainnav" onclick="toggleNav(this)">
+    <svg class="bars" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    <svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+  </button>
 </div>
 
 <!-- ================= VISTA: LANDING ================= -->
@@ -200,8 +253,10 @@
     <div class="hero-in">
       <h1>PET<span>CARE</span></h1>
       <p>Medicina veterinaria preventiva como beneficio corporativo. Cada colaborador de tu empresa inscribe una mascota y accede a atención domiciliaria anual, telemedicina y una red de convenios preferenciales.</p>
-      <button class="btn light" onclick="go('benef')">Acceso Beneficiarios</button>
-      <button class="btn ghost" style="color:#fff;border-color:#fff;margin-left:8px" onclick="document.getElementById('registro').scrollIntoView()">Registrarme</button>
+      <div class="hero-cta">
+        <button class="btn light" onclick="go('benef')">Acceso Beneficiarios</button>
+        <button class="btn ghost" style="color:#fff;border-color:#fff" onclick="document.getElementById('registro').scrollIntoView()">Registrarme</button>
+      </div>
     </div>
   </div>
 
@@ -773,7 +828,23 @@
       const idx = {landing:0, benef:1, admin:2, plan:3}[v];
       navBtns[idx].classList.add('act');
     }
+    closeNav();
     window.scrollTo({top:0});
+  }
+
+  /* ---------- menú hamburguesa ---------- */
+  function toggleNav(btn){
+    const bar = document.querySelector('.topbar');
+    const open = bar.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  }
+  function closeNav(){
+    const bar = document.querySelector('.topbar');
+    if(!bar.classList.contains('open')) return;
+    bar.classList.remove('open');
+    const tog = document.querySelector('.navtoggle');
+    if(tog){ tog.setAttribute('aria-expanded','false'); tog.setAttribute('aria-label','Abrir menú'); }
   }
   function pane(prefix, id, btn){
     const scope = prefix==='b' ? '#v-benef' : '#v-admin';
