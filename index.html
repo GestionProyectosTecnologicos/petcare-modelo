@@ -175,6 +175,23 @@
   /* ============ CTA DEL HERO ============ */
   .hero-cta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
+  /* ============ CTA FLOTANTE (burbuja) ============ */
+  /* Vive dentro de #v-landing: solo se muestra cuando el landing está activo.
+     display:none base -> oculto en desktop; la media query mobile lo activa. */
+  .fab-cta{
+    display:none;position:fixed;z-index:55;right:16px;
+    bottom:calc(16px + env(safe-area-inset-bottom));
+    align-items:center;gap:8px;
+    background:#F5F0E9;color:var(--navy);
+    border:1.5px solid var(--navy);border-radius:999px;
+    padding:13px 22px;font-size:12.5px;font-weight:700;
+    letter-spacing:.6px;text-transform:uppercase;cursor:pointer;
+    box-shadow:0 10px 26px rgba(17,34,80,.32);
+    transition:transform .12s,box-shadow .12s,background .12s;
+  }
+  .fab-cta:hover{background:#fff;box-shadow:0 12px 30px rgba(17,34,80,.4)}
+  .fab-cta:active{transform:translateY(1px)}
+
   /* ============ MENÚ HAMBURGUESA ============ */
   .navtoggle{display:none;align-items:center;justify-content:center;width:42px;height:42px;flex:0 0 auto;background:transparent;border:1px solid rgba(255,255,255,.35);border-radius:10px;cursor:pointer;transition:.15s}
   .navtoggle:hover{background:rgba(255,255,255,.12)}
@@ -211,6 +228,15 @@
 
     .foot-in{flex-direction:column;align-items:flex-start;gap:12px}
     .foot-in>div:last-child{text-align:left !important}
+
+    /* CTA flotante visible + espacio para que no tape el footer */
+    .fab-cta{display:inline-flex}
+    footer{padding-bottom:calc(94px + env(safe-area-inset-bottom))}
+    /* watermark: más chico y a la izquierda para no chocar con el fab */
+    .wm{font-size:9px;letter-spacing:1.5px;padding:4px 8px;bottom:calc(12px + env(safe-area-inset-bottom))}
+    .wm-x{display:none}
+    /* toast por encima del fab */
+    #toast{left:16px;right:16px;max-width:none;bottom:calc(84px + env(safe-area-inset-bottom))}
   }
 
   /* ============ PISO DE ACCESIBILIDAD ============ */
@@ -350,6 +376,9 @@
       <div style="text-align:right">Prototipo demostrativo — datos ficticios de referencia.<br>Estructura, textos y marca sujetos a revisión.</div>
     </div>
   </footer>
+
+  <!-- CTA flotante (burbuja) — solo mobile, misma acción que el "Registrarme" del hero -->
+  <button class="fab-cta" onclick="document.getElementById('registro').scrollIntoView()">Registrarme</button>
 </section>
 
 <!-- ================= VISTA: PORTAL BENEFICIARIO ================= -->
@@ -813,7 +842,7 @@
   </div>
 </section>
 
-<div class="wm">MODELO BORRADOR — DATOS FICTICIOS</div>
+<div class="wm">MODELO BORRADOR<span class="wm-x"> — DATOS FICTICIOS</span></div>
 <div id="toast"></div>
 
 <script>
