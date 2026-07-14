@@ -151,13 +151,14 @@
   .empcard .es{font-size:12px;color:var(--muted);margin-bottom:10px}
   .mini{font-size:12px;color:var(--muted)}
 
-  /* ============ PLAN ============ */
-  .fase{border-left:4px solid var(--navy);padding:4px 0 4px 16px;margin-bottom:18px}
-  .fase h3{color:var(--navy);font-size:15.5px}
-  .fase .fl{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:800}
-  .fase ul{margin:8px 0 0 18px;font-size:13.5px}
-  .fase li{margin-bottom:4px}
-  .pend td:first-child{font-weight:700;color:var(--navy);width:38%}
+  /* ============ PLAN DE COSTOS ============ */
+  .clist{list-style:none;margin-top:14px}
+  .clist li{position:relative;padding:0 0 10px 26px;font-size:13.5px}
+  .clist li::before{content:"\2713";position:absolute;left:0;top:-1px;color:var(--ok);font-weight:800}
+  .price{font-size:34px;font-weight:800;color:var(--navy);line-height:1.1;margin:10px 0 2px}
+  .price small{font-size:14px;font-weight:600;color:var(--muted)}
+  .pricetbl td:last-child{text-align:right;font-weight:800;color:var(--navy);white-space:nowrap}
+  .comp h3{color:var(--navy);font-size:15.5px;margin:10px 0 4px}
 
   /* ============ WATERMARK / TOAST ============ */
   .wm{position:fixed;bottom:14px;left:14px;z-index:40;font-size:10px;letter-spacing:2.5px;color:var(--navy);opacity:.45;font-weight:800;border:1.5px dashed var(--navy);padding:5px 10px;border-radius:6px;background:rgba(244,238,228,.85);pointer-events:none}
@@ -263,7 +264,7 @@
     <button class="act" onclick="go('landing',this)">Landing</button>
     <button onclick="go('benef',this)">Portal Beneficiario</button>
     <button onclick="go('admin',this)">Portal Administración</button>
-    <button onclick="go('plan',this)">Plan de Trabajo</button>
+    <button onclick="go('costos',this)">Plan de Costos</button>
   </nav>
   <div class="draftbadge">MODELO BORRADOR</div>
   <button class="navtoggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mainnav" onclick="toggleNav(this)">
@@ -782,62 +783,64 @@
   </div>
 </section>
 
-<!-- ================= VISTA: PLAN DE TRABAJO ================= -->
-<section id="v-plan" class="view">
-  <div class="wrap" style="max-width:920px">
-    <h2 class="sec">Plan de trabajo propuesto</h2>
-    <p class="sub">Implementación por etapas, partiendo por lo definido como prioritario en la reunión: agendamiento y captura de datos.</p>
+<!-- ================= VISTA: PLAN DE COSTOS ================= -->
+<section id="v-costos" class="view">
+  <div class="wrap" style="max-width:1020px">
+    <h2 class="sec">Plan de costos de implementación</h2>
+    <p class="sub">Modelo simple de dos cobros: un pago único de implementación y una membresía mensual que escala junto con el negocio.</p>
 
-    <div class="card" style="margin-bottom:20px">
-      <div class="fase">
-        <div class="fl">Etapa 1 · Núcleo operativo</div>
-        <h3>Agendamiento, portales y datos</h3>
-        <ul>
-          <li>Landing page con registro validado contra nómina (RUT + nombre + verificación de correo).</li>
-          <li>Portal del beneficiario: perfil de mascota, historial clínico, reserva de visita anual (solo día) y consulta online (día y hora).</li>
-          <li>Motor de agenda presencial: sectores, cierre 24 hrs antes, tope diario configurable, ruta ordenada y ventanas horarias.</li>
-          <li>Portal de administración: dashboard, gestión de beneficiarios y registro clínico del equipo veterinario.</li>
-        </ul>
+    <div class="grid g3" style="margin-bottom:20px">
+      <div class="card comp">
+        <span class="chip info">CORAZÓN DEL NEGOCIO</span>
+        <h3>Landing Page</h3>
+        <p class="mini">La carta de presentación de cara a las empresas: imagen profesional del plan, servicios, red de convenios y puerta de entrada validada de los beneficiarios.</p>
       </div>
-      <div class="fase">
-        <div class="fl">Etapa 2 · Red de convenios y comunicación</div>
-        <h3>Derivaciones trazables y campañas</h3>
-        <ul>
-          <li>Módulo de derivaciones con estados y métricas por convenio (respaldo de los acuerdos comerciales).</li>
-          <li>Notificaciones automáticas de ventana horaria por correo / WhatsApp.</li>
-          <li>Recordatorios automáticos: beneficio sin usar, vacunas por vencer.</li>
-        </ul>
+      <div class="card comp">
+        <span class="chip info">COLABORADORES</span>
+        <h3>Portal Beneficiario</h3>
+        <p class="mini">Cómo los colaboradores se relacionan con el sistema: ficha e historial de su mascota, reserva de la visita anual, consulta online y acceso a los beneficios.</p>
       </div>
-      <div class="fase" style="margin-bottom:0">
-        <div class="fl">Etapa 3 · Escalamiento</div>
-        <h3>Más empresas, más datos, más ingresos</h3>
-        <ul>
-          <li>Alta de nuevas empresas en minutos (carga de nómina y activación).</li>
-          <li>Reportes de uso por empresa para renovaciones y venta a nuevos clientes.</li>
-          <li>Email marketing y promociones sobre la base de datos acumulada.</li>
-        </ul>
+      <div class="card comp">
+        <span class="chip info">DUEÑOS</span>
+        <h3>Portal Administrador</h3>
+        <p class="mini">La gestión del negocio en un solo lugar: agenda y rutas, validación de beneficiarios, registro clínico, derivaciones, empresas y data para campañas.</p>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:20px">
-      <b style="color:var(--navy);font-size:15px">Definiciones pendientes (conversadas en la reunión)</b>
-      <table class="pend" style="margin-top:10px">
-        <tr><td>Esquema de agendamiento presencial</td><td>Opción A (días fijos por sector) u Opción B (día libre con ruta optimizada). Ambas están simuladas en este prototipo para comparar.</td></tr>
-        <tr><td>Tope de visitas diarias</td><td>Se habló de aprox. 10 por día. Queda como parámetro configurable.</td></tr>
-        <tr><td>Validación de registros</td><td>Aprobación automática por cruce de nómina, o revisión manual caso a caso.</td></tr>
-        <tr><td>Nómina por empresa</td><td>Campos mínimos a solicitar: RUT y nombre (evaluar correo corporativo).</td></tr>
-        <tr><td>Canal de notificación</td><td>Ventana horaria confirmada por correo, WhatsApp o ambos.</td></tr>
-        <tr><td>Convenios</td><td>Logos y condiciones finales de endocrinología, dermatología y urgencias 24 hrs en cierre.</td></tr>
-      </table>
+    <div class="grid g2">
+      <div class="card" style="border-top:5px solid var(--navy)">
+        <span class="chip info">COBRO 1 · PAGO ÚNICO</span>
+        <div class="price">$250.000 <small>CLP</small></div>
+        <b style="color:var(--navy)">Implementación del sistema</b>
+        <p class="mini" style="margin-top:4px">Incluye todo lo necesario para que PetCare comience a operar el negocio.</p>
+        <ul class="clist">
+          <li>Sistema completo operativo con bases de datos integradas.</li>
+          <li>Sistema de agenda funcionando: visitas domiciliarias con rutas y consultas online.</li>
+          <li>Landing page con diseño final asociado al logo de la empresa.</li>
+          <li>Conciliación del registro de empleados: validación contra la nómina de cada empresa.</li>
+          <li>Portal de administración final y detallado.</li>
+          <li>Sistema de soporte integrado y mantención del sistema.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:5px solid var(--navy)">
+        <span class="chip info">COBRO 2 · MEMBRESÍA MENSUAL</span>
+        <div class="price">Desde 2,0 UF <small>/ mes</small></div>
+        <b style="color:var(--navy)">Según beneficiarios activos</b>
+        <p class="mini" style="margin-top:4px">La mensualidad crece por tramos, en línea con el crecimiento de PetCare.</p>
+        <table class="pricetbl" style="margin-top:12px">
+          <tr><th>Tramo de beneficiarios</th><th style="text-align:right">Valor mensual</th></tr>
+          <tr><td>Hasta 300 beneficiarios</td><td>2,0 UF</td></tr>
+          <tr><td>301 a 500 beneficiarios</td><td>2,5 UF</td></tr>
+          <tr><td>501 a 1.000 beneficiarios</td><td>3,5 UF</td></tr>
+          <tr><td>1.001 a 2.000 beneficiarios</td><td>5,0 UF</td></tr>
+          <tr><td>2.001 a 5.000 beneficiarios</td><td>7,0 UF</td></tr>
+          <tr><td>Más de 5.000 beneficiarios</td><td>10,0 UF</td></tr>
+        </table>
+      </div>
     </div>
 
-    <div class="card">
-      <b style="color:var(--navy);font-size:15px">Modelo de colaboración</b>
-      <ul style="margin:10px 0 0 18px;font-size:13.5px">
-        <li style="margin-bottom:6px"><b>Prototipo sin costo</b> — este modelo borrador se itera con el equipo PetCare hasta validar la idea (esto sí, esto no).</li>
-        <li style="margin-bottom:6px"><b>Desarrollo inicial</b> — un pago único por la construcción de la plataforma (bases de datos, portales y agenda operativos).</li>
-        <li style="margin-bottom:6px"><b>Membresía y soporte en pausa</b> — la mensualidad se activa solo cuando PetCare cierre su primer cliente corporativo. Sin clientes, sin cobros mensuales.</li>
-      </ul>
+    <div class="note" style="margin-top:20px">
+      <b>Condiciones del modelo:</b> el prototipo y sus iteraciones no tienen costo. La membresía mensual incluye soporte y mantención, y se activa recién cuando PetCare cierre su primer convenio corporativo — sin clientes no hay cobro mensual.
     </div>
   </div>
 </section>
@@ -854,7 +857,7 @@
     navBtns.forEach(b=>b.classList.remove('act'));
     if(btn){ btn.classList.add('act'); }
     else{
-      const idx = {landing:0, benef:1, admin:2, plan:3}[v];
+      const idx = {landing:0, benef:1, admin:2, costos:3}[v];
       navBtns[idx].classList.add('act');
     }
     closeNav();
@@ -969,9 +972,10 @@
   optRefresh();
   orender();
 
-  /* ---------- deep-link por hash: #benef #admin #plan ---------- */
+  /* ---------- deep-link por hash: #benef #admin #costos (#plan = alias) ---------- */
   const h = location.hash.replace('#','');
-  if(['benef','admin','plan'].includes(h)) go(h);
+  const hv = h === 'plan' ? 'costos' : h;
+  if(['benef','admin','costos'].includes(hv)) go(hv);
 </script>
 </body>
 </html>
