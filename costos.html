@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetCare · Plan de Costos (Interno — Modelo Borrador)</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ================= BARRA SUPERIOR ================= -->
+<div class="topbar">
+  <div class="brand" onclick="location.href='index.html'" style="cursor:pointer">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><g fill="#fff"><ellipse cx="7.2" cy="7.6" rx="2" ry="2.7" transform="rotate(-18 7.2 7.6)"/><ellipse cx="12" cy="6" rx="2" ry="2.7"/><ellipse cx="16.8" cy="7.6" rx="2" ry="2.7" transform="rotate(18 16.8 7.6)"/><path d="M12 10.2c-2.6 0-5.4 2.3-5.4 5 0 1.9 1.4 3 3.1 3 .9 0 1.6-.3 2.3-.3s1.4.3 2.3.3c1.7 0 3.1-1.1 3.1-3 0-2.7-2.8-5-5.4-5z"/></g></svg>
+    <div>
+      <div class="b1">Pet<span style="font-weight:400">Care</span></div>
+      <div class="b2">PLAN DE SALUD</div>
+    </div>
+  </div>
+  <nav class="viewnav" id="mainnav">
+    <button onclick="location.href='index.html'">Registro</button>
+    <button onclick="location.href='clientes.html'">Clientes</button>
+    <button onclick="location.href='admin.html'">Administración</button>
+  </nav>
+  <div class="draftbadge">MODELO BORRADOR</div>
+  <button class="navtoggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mainnav" onclick="toggleNav(this)">
+    <svg class="bars" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    <svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+  </button>
+</div>
+
+<!-- ================= PLAN DE COSTOS ================= -->
+<section id="v-costos">
+  <div class="wrap" style="max-width:1020px">
+    <h2 class="sec">Plan de costos de implementación</h2>
+    <p class="sub">Modelo simple de dos cobros: un pago único de implementación y una membresía mensual que escala junto con el negocio.</p>
+
+    <div class="grid g3" style="margin-bottom:20px">
+      <div class="card comp">
+        <span class="chip info">CORAZÓN DEL NEGOCIO</span>
+        <h3>Landing Page</h3>
+        <p class="mini">La carta de presentación de cara a las empresas: imagen profesional del plan, servicios, red de convenios y puerta de entrada validada de los beneficiarios.</p>
+      </div>
+      <div class="card comp">
+        <span class="chip info">COLABORADORES</span>
+        <h3>Portal Beneficiario</h3>
+        <p class="mini">Cómo los colaboradores se relacionan con el sistema: ficha e historial de su mascota, reserva de la visita anual, consulta online y acceso a los beneficios.</p>
+      </div>
+      <div class="card comp">
+        <span class="chip info">DUEÑOS</span>
+        <h3>Portal Administrador</h3>
+        <p class="mini">La gestión del negocio en un solo lugar: agenda y rutas, validación de beneficiarios, registro clínico, derivaciones, empresas y data para campañas.</p>
+      </div>
+    </div>
+
+    <div class="grid g2">
+      <div class="card" style="border-top:5px solid var(--navy)">
+        <span class="chip info">COBRO 1 · PAGO ÚNICO</span>
+        <div class="price">$250.000 <small>CLP</small></div>
+        <b style="color:var(--navy)">Implementación del sistema</b>
+        <p class="mini" style="margin-top:4px">Incluye todo lo necesario para que PetCare comience a operar el negocio.</p>
+        <ul class="clist">
+          <li>Sistema completo operativo con bases de datos integradas.</li>
+          <li>Sistema de agenda funcionando: visitas domiciliarias con rutas y consultas online.</li>
+          <li>Landing page con diseño final asociado al logo de la empresa.</li>
+          <li>Conciliación del registro de empleados: validación contra la nómina de cada empresa.</li>
+          <li>Portal de administración final y detallado.</li>
+          <li>Sistema de soporte integrado y mantención del sistema.</li>
+        </ul>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);display:flex;align-items:center;gap:10px">
+          <span class="chip ok">PLAZO</span>
+          <span style="font-size:13.5px;color:var(--ink)"><b style="color:var(--navy)">Implementación en 2 semanas</b> desde el inicio del proyecto.</span>
+        </div>
+      </div>
+      <div class="card" style="border-top:5px solid var(--navy)">
+        <span class="chip info">COBRO 2 · MEMBRESÍA MENSUAL</span>
+        <div class="price">Desde 2,0 UF <small>/ mes</small></div>
+        <b style="color:var(--navy)">Según beneficiarios activos</b>
+        <p class="mini" style="margin-top:4px">La mensualidad crece por tramos, en línea con el crecimiento de PetCare.</p>
+        <table class="pricetbl" style="margin-top:12px">
+          <tr><th>Tramo de beneficiarios</th><th style="text-align:right">Valor mensual</th></tr>
+          <tr><td>Hasta 300 beneficiarios</td><td>2,0 UF</td></tr>
+          <tr><td>301 a 500 beneficiarios</td><td>2,5 UF</td></tr>
+          <tr><td>501 a 1.000 beneficiarios</td><td>3,5 UF</td></tr>
+          <tr><td>1.001 a 2.000 beneficiarios</td><td>5,0 UF</td></tr>
+          <tr><td>2.001 a 5.000 beneficiarios</td><td>7,0 UF</td></tr>
+          <tr><td>Más de 5.000 beneficiarios</td><td>10,0 UF</td></tr>
+        </table>
+        <b style="color:var(--navy);display:block;margin-top:16px">La membresía cubre</b>
+        <ul class="clist" style="margin-top:8px">
+          <li>Soporte permanente del sistema.</li>
+          <li>Validación de las bases de datos integradas y en tiempo real.</li>
+          <li>Ciberseguridad y resguardo de los datos.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:20px">
+      <b>Condiciones del modelo:</b> el prototipo y sus iteraciones no tienen costo. La membresía mensual incluye soporte y mantención, y se activa recién cuando PetCare cierre su primer convenio corporativo — sin clientes no hay cobro mensual.
+    </div>
+  </div>
+</section>
+
+<div class="wm">MODELO BORRADOR<span class="wm-x"> — DATOS FICTICIOS</span></div>
+<div id="toast"></div>
+
+<script src="js/common.js"></script>
+</body>
+</html>
